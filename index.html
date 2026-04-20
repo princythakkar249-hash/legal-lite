@@ -1,0 +1,4057 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Legal Lite</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: #1a1a2e;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .phone-wrap {
+        width: 320px;
+        height: 650px;
+        background: #f8f9fa;
+        border-radius: 36px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid #ddd;
+        flex-shrink: 0;
+      }
+
+      .screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .screen.active {
+        display: flex;
+      }
+
+      :root {
+        --navy: #0b3c5d;
+        --gold: #f4b400;
+        --white: #ffffff;
+        --light: #f8f9fa;
+        --gray: #6c757d;
+        --light-gray: #e9ecef;
+        --text: #1a1a2a;
+        --success: #28a745;
+      }
+
+      /* ===== LOGO SVG component (reused via class) ===== */
+      .brand-logo-svg {
+        display: inline-block;
+      }
+
+      /* ===== SPLASH SCREEN ===== */
+      #screen-splash {
+        background: linear-gradient(
+          160deg,
+          #0b3c5d 0%,
+          #0d4f7c 50%,
+          #0b3c5d 100%
+        );
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+      }
+      .splash-logo-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: splashIn 0.8s ease-out forwards;
+      }
+      @keyframes splashIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .splash-tagline {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 12px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-top: 6px;
+        font-weight: 400;
+      }
+      .splash-btns {
+        margin-top: 48px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 220px;
+        animation: splashIn 0.8s ease-out 0.2s both;
+      }
+      .splash-btn-primary {
+        background: var(--gold);
+        color: #1a1a2a;
+        border: none;
+        border-radius: 12px;
+        padding: 13px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        letter-spacing: 0.3px;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .splash-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(244, 180, 0, 0.35);
+      }
+      .splash-btn-secondary {
+        background: transparent;
+        color: white;
+        border: 1.5px solid rgba(255, 255, 255, 0.4);
+        border-radius: 12px;
+        padding: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: inherit;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+      .splash-btn-secondary:hover {
+        border-color: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .splash-guest {
+        margin-top: 16px;
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 11px;
+        cursor: pointer;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+      .splash-dots {
+        position: absolute;
+        bottom: 30px;
+        display: flex;
+        gap: 6px;
+      }
+      .splash-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .splash-dot.active {
+        background: var(--gold);
+        width: 16px;
+        border-radius: 3px;
+      }
+
+      /* ===== AUTH SCREENS (Login / Signup) ===== */
+      .auth-screen {
+        background: #f8f9fa;
+        flex-direction: column;
+      }
+      .auth-header {
+        background: var(--navy);
+        padding: 20px 20px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        flex-shrink: 0;
+        position: relative;
+      }
+      .auth-back {
+        background: rgba(255, 255, 255, 0.12);
+        border: none;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .auth-header-title {
+        color: white;
+        font-size: 22px;
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        line-height: 1.1;
+      }
+      .auth-header-sub {
+        color: rgba(255, 255, 255, 0.65);
+        font-size: 12px;
+      }
+      .auth-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+      }
+      .auth-body::-webkit-scrollbar {
+        display: none;
+      }
+      .auth-field {
+        margin-bottom: 14px;
+      }
+      .auth-field label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+        display: block;
+        margin-bottom: 5px;
+      }
+      .auth-field input {
+        width: 100%;
+        border: 1.5px solid #ddd;
+        border-radius: 10px;
+        padding: 11px 14px;
+        font-size: 13px;
+        outline: none;
+        font-family: inherit;
+        background: white;
+        transition: border-color 0.15s;
+      }
+      .auth-field input:focus {
+        border-color: var(--navy);
+      }
+      .auth-submit {
+        width: 100%;
+        background: var(--navy);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 13px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        margin-top: 4px;
+        margin-bottom: 14px;
+        transition: transform 0.15s;
+      }
+      .auth-submit:hover {
+        transform: translateY(-1px);
+      }
+      .auth-divider {
+        text-align: center;
+        position: relative;
+        margin: 14px 0;
+        font-size: 11px;
+        color: var(--gray);
+      }
+      .auth-divider::before,
+      .auth-divider::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 42%;
+        height: 1px;
+        background: #ddd;
+      }
+      .auth-divider::before {
+        left: 0;
+      }
+      .auth-divider::after {
+        right: 0;
+      }
+      .auth-google {
+        width: 100%;
+        background: white;
+        border: 1.5px solid #ddd;
+        border-radius: 12px;
+        padding: 11px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: var(--text);
+        margin-bottom: 16px;
+      }
+      .auth-switch {
+        text-align: center;
+        font-size: 12px;
+        color: var(--gray);
+      }
+      .auth-switch span {
+        color: var(--navy);
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: underline;
+        transition: opacity 0.2s;
+      }
+      .auth-switch span:hover {
+        opacity: 0.7;
+      }
+      .auth-switch span:active {
+        opacity: 0.5;
+      }
+      .auth-forgot {
+        text-align: right;
+        font-size: 11px;
+        color: var(--navy);
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: -8px;
+        margin-bottom: 14px;
+      }
+      .terms-note {
+        font-size: 10px;
+        color: var(--gray);
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 8px;
+      }
+      .terms-note span {
+        color: var(--navy);
+        cursor: pointer;
+      }
+
+      /* ===== LOGO in auth header ===== */
+      .auth-logo-inline {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 4px;
+      }
+
+      /* ===== TOP BAR ===== */
+      .top-bar {
+        background: var(--navy);
+        color: white;
+        padding: 12px 16px 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .top-bar h2 {
+        font-size: 15px;
+        font-weight: 700;
+        flex: 1;
+      }
+      .top-bar p {
+        font-size: 11px;
+        opacity: 0.8;
+      }
+      .back-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0 6px 0 0;
+      }
+
+      /* ===== BOTTOM NAV ===== */
+      .bottom-nav {
+        background: white;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        padding: 6px 0 10px;
+        flex-shrink: 0;
+      }
+      .nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        cursor: pointer;
+        padding: 3px;
+        border: none;
+        background: none;
+      }
+      .nav-item svg {
+        width: 18px;
+        height: 18px;
+      }
+      .nav-item span {
+        font-size: 9px;
+        color: var(--gray);
+      }
+      .nav-item.active span {
+        color: var(--navy);
+        font-weight: 600;
+      }
+
+      .scroll-content {
+        flex: 1;
+        overflow-y: auto;
+      }
+      .scroll-content::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* ===== HOME ===== */
+      .hero {
+        background: var(--navy);
+        color: white;
+        padding: 14px 16px 16px;
+      }
+      .hero-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .hero-brand-text h1 {
+        font-size: 15px;
+        font-weight: 800;
+        font-family: "Playfair Display", serif;
+        line-height: 1;
+      }
+      .hero-brand-text p {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.55);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+      .hero h2 {
+        font-size: 19px;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 3px;
+        font-family: "Playfair Display", serif;
+      }
+      .hero > p {
+        font-size: 11px;
+        opacity: 0.8;
+      }
+      .hero-stats {
+        display: flex;
+        background: white;
+        border-radius: 10px;
+        margin-top: 12px;
+        overflow: hidden;
+      }
+      .stat {
+        flex: 1;
+        padding: 10px 6px;
+        text-align: center;
+        border-right: 1px solid #eee;
+      }
+      .stat:last-child {
+        border-right: none;
+      }
+      .stat .val {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--navy);
+      }
+      .stat .val.gold {
+        color: var(--gold);
+      }
+      .stat .lbl {
+        font-size: 9px;
+        color: var(--gray);
+      }
+
+      .section {
+        padding: 12px 12px 0;
+      }
+      .section h3 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+
+      .services-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 12px;
+      }
+      .service-card {
+        background: white;
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+        position: relative;
+        transition: transform 0.15s;
+      }
+      .service-card:hover {
+        transform: translateY(-2px);
+      }
+
+      /* ===== ASK A LAWYER (in-page panel on Home) ===== */
+      /* Removed #screen-home { position: relative; } so it uses .screen's position: absolute */
+      .ask-lawyer-panel {
+        position: absolute;
+        inset: 0;
+        z-index: 30;
+        background: #f8f9fa;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .ask-lawyer-panel.open {
+        display: flex;
+      }
+      .aal-body {
+        padding: 0 12px 12px;
+      }
+      .aal-fee-card {
+        background: #eceff1;
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+      }
+      .aal-fee-label {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: var(--gray);
+        margin-bottom: 6px;
+      }
+      .aal-fee-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+      .aal-fee-name {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .aal-fee-price {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--navy);
+        white-space: nowrap;
+      }
+      .aal-how {
+        background: #e8f4fd;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+      .aal-how h4 {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: 6px;
+      }
+      .aal-how p {
+        font-size: 11px;
+        color: var(--text);
+        line-height: 1.45;
+      }
+      .aal-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: var(--text);
+      }
+      .aal-textarea-wrap {
+        position: relative;
+        margin-bottom: 14px;
+      }
+      .aal-textarea-wrap textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 10px 10px 28px;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        font-size: 12px;
+        font-family: inherit;
+        resize: vertical;
+        box-sizing: border-box;
+      }
+      .aal-textarea-wrap textarea:focus {
+        outline: none;
+        border-color: var(--navy);
+      }
+      .aal-counter {
+        position: absolute;
+        right: 10px;
+        bottom: 8px;
+        font-size: 10px;
+        color: var(--gray);
+      }
+      .aal-cat-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        margin-bottom: 8px;
+        color: var(--text);
+      }
+      .aal-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+      .aal-chip {
+        border: 1.5px solid #dee2e6;
+        background: white;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        color: var(--text);
+      }
+      .aal-chip.selected {
+        background: var(--navy);
+        border-color: var(--navy);
+        color: white;
+      }
+      .aal-submit {
+        width: 100%;
+        background: var(--navy);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 13px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .aal-submit:active {
+        opacity: 0.92;
+      }
+
+      .service-card .icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
+      .service-card h4 {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .service-card p {
+        font-size: 10px;
+        color: var(--gray);
+        line-height: 1.3;
+      }
+      .badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--gold);
+        color: #333;
+        font-size: 8px;
+        font-weight: 700;
+        padding: 2px 5px;
+        border-radius: 6px;
+      }
+
+      .question-item {
+        background: white;
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin: 0 12px 6px;
+        font-size: 12px;
+        color: var(--text);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+      }
+      .question-item:hover {
+        background: #f0f4ff;
+      }
+
+      /* ===== AI ===== */
+      .ai-header {
+        background: var(--navy);
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .ai-avatar {
+        width: 30px;
+        height: 30px;
+        background: var(--gold);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+      }
+      .ai-header h2 {
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .ai-header p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 10px;
+      }
+
+      .suggested-chips {
+        padding: 10px 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .suggested-label {
+        width: 100%;
+        font-size: 10px;
+        color: var(--gray);
+        margin-bottom: 2px;
+      }
+      .chip {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 16px;
+        padding: 5px 10px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .chip:hover {
+        background: var(--navy);
+        color: white;
+        border-color: var(--navy);
+      }
+
+      .chat-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .chat-area::-webkit-scrollbar {
+        display: none;
+      }
+      .msg {
+        max-width: 85%;
+      }
+      .msg.ai {
+        align-self: flex-start;
+      }
+      .msg.user {
+        align-self: flex-end;
+      }
+      .msg-bubble {
+        padding: 10px 12px;
+        border-radius: 14px;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .msg.ai .msg-bubble {
+        background: white;
+        color: var(--text);
+        border-bottom-left-radius: 3px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+      .msg.user .msg-bubble {
+        background: var(--navy);
+        color: white;
+        border-bottom-right-radius: 3px;
+      }
+      .msg-time {
+        font-size: 9px;
+        color: var(--gray);
+        margin-top: 3px;
+        padding: 0 3px;
+      }
+      .msg.user .msg-time {
+        text-align: right;
+      }
+
+      .chat-input-wrap {
+        padding: 8px 12px;
+        background: white;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .chat-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 8px 12px;
+        font-size: 12px;
+        outline: none;
+        font-family: inherit;
+      }
+      .chat-input:focus {
+        border-color: var(--navy);
+      }
+      .send-btn {
+        width: 34px;
+        height: 34px;
+        background: var(--navy);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+
+      .typing-indicator {
+        display: flex;
+        gap: 3px;
+        padding: 10px 12px;
+        background: white;
+        border-radius: 14px;
+        border-bottom-left-radius: 3px;
+        width: fit-content;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+      .typing-dot {
+        width: 6px;
+        height: 6px;
+        background: #999;
+        border-radius: 50%;
+        animation: bounce 1.4s infinite;
+      }
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes bounce {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-5px);
+        }
+      }
+
+      /* ===== LAWYERS ===== */
+      .filter-bar {
+        padding: 8px 12px;
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        flex-shrink: 0;
+      }
+      .filter-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .filter-btn {
+        white-space: nowrap;
+        padding: 5px 12px;
+        border-radius: 16px;
+        border: 1px solid #ddd;
+        background: white;
+        font-size: 11px;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .filter-btn.active {
+        background: var(--navy);
+        color: white;
+        border-color: var(--navy);
+      }
+
+      .lawyer-card {
+        margin: 0 12px 10px;
+        background: white;
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      }
+      .lawyer-header {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .lawyer-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        font-weight: 700;
+        color: white;
+        flex-shrink: 0;
+      }
+      .lawyer-info h4 {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .lawyer-info p {
+        font-size: 11px;
+        color: var(--gray);
+      }
+      .lawyer-meta {
+        display: flex;
+        gap: 8px;
+        font-size: 10px;
+        color: var(--gray);
+        margin-top: 3px;
+      }
+      .avail {
+        font-size: 10px;
+        margin-top: 3px;
+      }
+      .avail.today {
+        color: var(--success);
+      }
+      .avail.tomorrow {
+        color: #f39c12;
+      }
+      .avail.later {
+        color: var(--gray);
+      }
+      .lawyer-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .rating {
+        font-size: 11px;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+      .price-info {
+        font-size: 10px;
+        color: var(--gray);
+      }
+      .price-val {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--navy);
+      }
+      .book-btn {
+        background: var(--navy);
+        color: white;
+        border: none;
+        border-radius: 7px;
+        padding: 7px 14px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      /* ===== BOOKING MODAL ===== */
+      .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        flex-direction: column;
+        justify-content: flex-end;
+        z-index: 100;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal-sheet {
+        background: white;
+        border-radius: 18px 18px 0 0;
+        padding: 16px;
+        max-height: 75%;
+        overflow-y: auto;
+      }
+      .modal-header {
+        background: var(--navy);
+        color: white;
+        margin: -16px -16px 12px;
+        padding: 12px 16px;
+        border-radius: 18px 18px 0 0;
+      }
+      .modal-header h3 {
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .modal-header p {
+        font-size: 11px;
+        opacity: 0.8;
+        margin-top: 1px;
+      }
+      .sub-header {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text);
+      }
+
+      .date-row {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        margin-bottom: 12px;
+      }
+      .date-row::-webkit-scrollbar {
+        display: none;
+      }
+      .date-pill {
+        min-width: 38px;
+        height: 48px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .date-pill .d-name {
+        font-size: 9px;
+        color: var(--gray);
+      }
+      .date-pill .d-num {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .date-pill.selected {
+        background: var(--navy);
+        border-color: var(--navy);
+      }
+      .date-pill.selected .d-name,
+      .date-pill.selected .d-num {
+        color: white;
+      }
+
+      .time-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+      .time-btn {
+        padding: 7px 11px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: white;
+        font-size: 11px;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .time-btn.selected {
+        background: var(--navy);
+        color: white;
+        border-color: var(--navy);
+      }
+
+      .fee-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 12px;
+      }
+      .fee-row span:first-child {
+        font-size: 12px;
+        color: var(--gray);
+      }
+      .fee-val {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--navy);
+      }
+      .confirm-btn {
+        width: 100%;
+        background: var(--navy);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      /* ===== PAYMENT ===== */
+      .order-summary {
+        background: white;
+        margin: 12px;
+        border-radius: 12px;
+        padding: 14px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      }
+      .order-summary h3 {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+      .order-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+      .order-row .lbl {
+        color: var(--gray);
+      }
+      .order-row.total {
+        border-top: 1px solid #eee;
+        padding-top: 6px;
+        margin-top: 4px;
+        font-weight: 700;
+      }
+      .pay-line-main {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+        max-width: 68%;
+      }
+      #pay-total.pay-total-amt {
+        color: var(--navy);
+        font-size: 15px;
+        font-weight: 800;
+      }
+      .pay-upi-block {
+        margin: 0 12px 12px;
+        padding: 0 2px;
+      }
+      .pay-upi-block label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        color: var(--text);
+      }
+      .pay-upi-block input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        font-size: 13px;
+        font-family: inherit;
+      }
+      .pay-upi-block input:focus {
+        outline: none;
+        border-color: var(--navy);
+      }
+      .pay-hint {
+        font-size: 10px;
+        color: var(--gray);
+        margin-top: 4px;
+      }
+      .pay-ssl {
+        font-size: 10px;
+        color: var(--gray);
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .pay-footer-note {
+        font-size: 9px;
+        color: var(--gray);
+        text-align: center;
+        padding: 0 16px 10px;
+        line-height: 1.4;
+      }
+
+      /* ===== IN-APP DIALOG (replaces native alert) ===== */
+      .app-dialog-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(11, 60, 93, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+        padding: 24px 18px;
+        box-sizing: border-box;
+        backdrop-filter: blur(2px);
+      }
+      .app-dialog-overlay.open {
+        display: flex;
+      }
+      .app-dialog {
+        background: #fff;
+        border-radius: 16px;
+        padding: 22px 18px 16px;
+        max-width: 268px;
+        width: 100%;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+        text-align: center;
+        animation: appDialogIn 0.22s ease-out;
+      }
+      @keyframes appDialogIn {
+        from {
+          opacity: 0;
+          transform: scale(0.96) translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .app-dialog-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 12px;
+        background: linear-gradient(135deg, #e8f4fd, #f0f4f8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+      }
+      .app-dialog-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--navy);
+        margin: 0 0 8px;
+        font-family: "Playfair Display", serif;
+        letter-spacing: -0.02em;
+      }
+      .app-dialog-msg {
+        font-size: 12px;
+        color: var(--gray);
+        line-height: 1.5;
+        margin: 0 0 18px;
+      }
+      .app-dialog-btn {
+        width: 100%;
+        background: var(--navy);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        letter-spacing: 0.02em;
+      }
+      .app-dialog-btn:hover {
+        filter: brightness(1.05);
+      }
+      .app-dialog-btn:active {
+        transform: scale(0.98);
+      }
+
+      .pay-methods {
+        margin: 0 12px 12px;
+      }
+      .pay-methods h3 {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .pay-option {
+        background: white;
+        border: 1.5px solid #eee;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: border-color 0.15s;
+      }
+      .pay-option.selected {
+        border-color: var(--navy);
+      }
+      .pay-icon {
+        font-size: 16px;
+      }
+      .pay-label {
+        flex: 1;
+      }
+      .pay-label .pl-name {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .pay-label .pl-sub {
+        font-size: 10px;
+        color: var(--gray);
+      }
+      .pay-radio {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 1.5px solid #ccc;
+        flex-shrink: 0;
+      }
+      .pay-radio.sel {
+        border-color: var(--navy);
+        background: var(--navy);
+      }
+
+      .pay-btn-wrap {
+        padding: 0 12px 12px;
+      }
+      #pay-btn {
+        width: 100%;
+        background: var(--navy);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 13px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      /* ===== SUCCESS ===== */
+      .success-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 20px;
+        gap: 8px;
+        text-align: center;
+        flex: 1;
+      }
+      .success-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--success);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin-bottom: 6px;
+      }
+      .success-screen h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .success-screen p {
+        font-size: 12px;
+        color: var(--gray);
+        line-height: 1.5;
+      }
+      .success-detail {
+        background: white;
+        border-radius: 10px;
+        padding: 12px 16px;
+        width: 100%;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        margin: 8px 0;
+      }
+      .success-detail .sd-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        padding: 3px 0;
+      }
+      .success-detail .sd-row .lbl {
+        color: var(--gray);
+      }
+      .success-home {
+        width: 100%;
+        background: var(--navy);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        margin-top: 6px;
+      }
+
+      /* ===== PROMO BANNER ===== */
+      .promo-banner {
+        margin: 12px 12px 8px;
+        background: linear-gradient(135deg, #e8f4fd, #f0eaff);
+        border-radius: 10px;
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .promo-icon {
+        font-size: 24px;
+      }
+      .promo-banner h4 {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .promo-banner p {
+        font-size: 10px;
+        color: var(--gray);
+        line-height: 1.4;
+      }
+
+      /* ===== TEMPLATES ===== */
+      .template-item {
+        margin: 0 12px 8px;
+        background: white;
+        border-radius: 10px;
+        padding: 11px 14px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+      }
+      .template-item:hover {
+        background: #f8f9fa;
+      }
+      .template-icon {
+        width: 30px;
+        height: 30px;
+        background: #f0eaff;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+      .template-info {
+        flex: 1;
+      }
+      .template-info h4 {
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .template-info p {
+        font-size: 10px;
+        color: var(--gray);
+        margin-top: 1px;
+      }
+      .template-info .downloads {
+        font-size: 10px;
+        color: var(--gray);
+        margin-top: 2px;
+      }
+      .template-badge {
+        background: var(--gold);
+        color: #333;
+        font-size: 8px;
+        font-weight: 700;
+        padding: 1px 5px;
+        border-radius: 5px;
+      }
+      .template-arrow {
+        color: var(--gray);
+        font-size: 13px;
+      }
+      .ai-help-banner {
+        margin: 12px;
+        background: #f0f4ff;
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+      }
+      .ai-help-banner h4 {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .ai-help-banner p {
+        font-size: 11px;
+        color: var(--gray);
+      }
+
+      /* ===== FORM ===== */
+      .form-section {
+        padding: 12px;
+      }
+      .info-box {
+        background: #e8f4fd;
+        border-radius: 10px;
+        padding: 11px;
+        margin-bottom: 12px;
+      }
+      .info-box p {
+        font-size: 11px;
+        color: #1a5f8a;
+        line-height: 1.6;
+      }
+      .field-group {
+        margin-bottom: 11px;
+      }
+      .field-group label {
+        font-size: 12px;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .field-group input {
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font-size: 12px;
+        outline: none;
+        font-family: inherit;
+      }
+      .field-group input:focus {
+        border-color: var(--navy);
+      }
+      .gen-btn {
+        width: 100%;
+        background: var(--navy);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        margin-bottom: 7px;
+      }
+      .ai-btn {
+        width: 100%;
+        background: white;
+        color: var(--navy);
+        border: 2px solid var(--navy);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        margin-bottom: 12px;
+      }
+      .preview-box {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px;
+      }
+      .preview-box h4 {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .preview-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        padding: 3px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+      .preview-row:last-child {
+        border: none;
+      }
+      .preview-row .key {
+        color: var(--gray);
+      }
+      .preview-more {
+        font-size: 10px;
+        color: var(--navy);
+        margin-top: 5px;
+      }
+
+      /* ===== PROFILE ===== */
+      .profile-hero {
+        background: var(--navy);
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+      .avatar-circle {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: #3d5a80;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 700;
+        color: white;
+        flex-shrink: 0;
+      }
+      .profile-name {
+        color: white;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .profile-email {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 11px;
+      }
+
+      .stats-row {
+        display: flex;
+        background: white;
+        margin: 12px;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+      .profile-stat {
+        flex: 1;
+        padding: 12px 6px;
+        text-align: center;
+        border-right: 1px solid #f0f0f0;
+      }
+      .profile-stat:last-child {
+        border: none;
+      }
+      .profile-stat .ps-val {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--navy);
+      }
+      .profile-stat .ps-lbl {
+        font-size: 10px;
+        color: var(--gray);
+      }
+
+      .quick-access {
+        margin: 0 12px 12px;
+      }
+      .quick-access h3 {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .quick-btns {
+        display: flex;
+        gap: 8px;
+      }
+      .quick-btn {
+        flex: 1;
+        background: white;
+        border-radius: 10px;
+        padding: 11px 6px;
+        text-align: center;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+      }
+      .quick-btn .qb-icon {
+        font-size: 18px;
+        margin-bottom: 3px;
+      }
+      .quick-btn span {
+        font-size: 10px;
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .activity-list {
+        margin: 0 12px 12px;
+      }
+      .activity-list h3 {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .activity-item {
+        background: white;
+        border-radius: 9px;
+        padding: 10px 12px;
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      .activity-item .act-text {
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .activity-item .act-time {
+        font-size: 10px;
+        color: var(--gray);
+        margin-top: 1px;
+      }
+      .act-badge {
+        font-size: 9px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 5px;
+        white-space: nowrap;
+      }
+      .act-badge.answered {
+        background: #d4edda;
+        color: #155724;
+      }
+      .act-badge.completed {
+        background: #cce5ff;
+        color: #004085;
+      }
+      .act-badge.downloaded {
+        background: #e2e3e5;
+        color: #383d41;
+      }
+
+      .settings-list {
+        margin: 0 12px 12px;
+      }
+      .settings-list h3 {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .setting-item {
+        background: white;
+        border-radius: 9px;
+        padding: 11px 14px;
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      .setting-item .si-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+      }
+      .setting-item .si-icon {
+        font-size: 14px;
+      }
+      .logout-item {
+        color: #dc3545;
+      }
+      .notif-badge {
+        background: #dc3545;
+        color: white;
+        font-size: 9px;
+        font-weight: 700;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .version-note {
+        text-align: center;
+        font-size: 10px;
+        color: var(--gray);
+        margin: 0 0 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone-wrap">
+      <!-- ===== SPLASH / START SCREEN ===== -->
+      <div class="screen active" id="screen-splash">
+        <div
+          style="
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            background: linear-gradient(
+              160deg,
+              #0b3c5d 0%,
+              #0d4f7c 55%,
+              #0b3c5d 100%
+            );
+          "
+        >
+          <div class="splash-logo-wrap">
+            <!-- Legal Lite SVG Logo: scales of justice + lightbulb -->
+            <svg
+              width="90"
+              height="90"
+              viewBox="0 0 90 90"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <!-- Scales base/pillar -->
+              <rect x="43" y="54" width="4" height="20" rx="2" fill="#4a8fc4" />
+              <rect x="34" y="72" width="22" height="4" rx="2" fill="#4a8fc4" />
+              <!-- Scale beam -->
+              <rect
+                x="18"
+                y="40"
+                width="54"
+                height="3"
+                rx="1.5"
+                fill="#4a8fc4"
+              />
+              <!-- Left scale pan -->
+              <path
+                d="M18 43 L10 56 L26 56 Z"
+                fill="none"
+                stroke="#4a8fc4"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <ellipse
+                cx="18"
+                cy="56"
+                rx="9"
+                ry="2.5"
+                fill="#4a8fc4"
+                opacity="0.6"
+              />
+              <!-- Right scale pan -->
+              <path
+                d="M72 43 L64 56 L80 56 Z"
+                fill="none"
+                stroke="#4a8fc4"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <ellipse
+                cx="72"
+                cy="56"
+                rx="9"
+                ry="2.5"
+                fill="#4a8fc4"
+                opacity="0.6"
+              />
+              <!-- Lightbulb body -->
+              <circle cx="45" cy="28" r="13" fill="#f4b400" />
+              <!-- Lightbulb base -->
+              <rect x="40" y="39" width="10" height="4" rx="1" fill="#e0a800" />
+              <rect x="41" y="43" width="8" height="3" rx="1" fill="#e0a800" />
+              <!-- Bulb shine -->
+              <circle cx="40" cy="24" r="3" fill="white" opacity="0.25" />
+              <!-- Rays -->
+              <line
+                x1="45"
+                y1="10"
+                x2="45"
+                y2="6"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="57"
+                y1="14"
+                x2="60"
+                y2="11"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="33"
+                y1="14"
+                x2="30"
+                y2="11"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="61"
+                y1="28"
+                x2="65"
+                y2="28"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="29"
+                y1="28"
+                x2="25"
+                y2="28"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 2px;
+                margin-top: 6px;
+              "
+            >
+              <span
+                style="
+                  font-family: &quot;Playfair Display&quot;, serif;
+                  font-size: 26px;
+                  font-weight: 800;
+                  color: white;
+                  letter-spacing: -0.5px;
+                "
+                >Legal</span
+              >
+              <span
+                style="
+                  font-family: &quot;Playfair Display&quot;, serif;
+                  font-size: 26px;
+                  font-weight: 800;
+                  color: #f4b400;
+                  letter-spacing: -0.5px;
+                  font-style: italic;
+                "
+                >Lite</span
+              >
+            </div>
+            <p class="splash-tagline">Simplifying Legal Help</p>
+          </div>
+
+          <div class="splash-btns">
+            <button class="splash-btn-primary" onclick="navigate('signup')">
+              Create Account
+            </button>
+            <button class="splash-btn-secondary" onclick="navigate('login')">
+              Log In
+            </button>
+          </div>
+          <p class="splash-guest" onclick="navigate('home')">
+            Continue as Guest →
+          </p>
+        </div>
+        <div class="splash-dots">
+          <div class="splash-dot active"></div>
+          <div class="splash-dot"></div>
+          <div class="splash-dot"></div>
+        </div>
+      </div>
+
+      <!-- ===== LOGIN SCREEN ===== -->
+      <div class="screen auth-screen" id="screen-login">
+        <div class="auth-header">
+          <button class="auth-back" onclick="navigate('splash')">←</button>
+          <div class="auth-logo-inline">
+            <svg width="22" height="22" viewBox="0 0 90 90" fill="none">
+              <rect x="43" y="54" width="4" height="20" rx="2" fill="#4a8fc4" />
+              <rect x="34" y="72" width="22" height="4" rx="2" fill="#4a8fc4" />
+              <rect
+                x="18"
+                y="40"
+                width="54"
+                height="3"
+                rx="1.5"
+                fill="#4a8fc4"
+              />
+              <path
+                d="M18 43 L10 56 L26 56 Z"
+                fill="none"
+                stroke="#4a8fc4"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <ellipse
+                cx="18"
+                cy="56"
+                rx="9"
+                ry="2.5"
+                fill="#4a8fc4"
+                opacity="0.6"
+              />
+              <path
+                d="M72 43 L64 56 L80 56 Z"
+                fill="none"
+                stroke="#4a8fc4"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <ellipse
+                cx="72"
+                cy="56"
+                rx="9"
+                ry="2.5"
+                fill="#4a8fc4"
+                opacity="0.6"
+              />
+              <circle cx="45" cy="28" r="13" fill="#f4b400" />
+              <rect x="40" y="39" width="10" height="4" rx="1" fill="#e0a800" />
+              <rect x="41" y="43" width="8" height="3" rx="1" fill="#e0a800" />
+              <circle cx="40" cy="24" r="3" fill="white" opacity="0.25" />
+              <line
+                x1="45"
+                y1="10"
+                x2="45"
+                y2="6"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="57"
+                y1="14"
+                x2="60"
+                y2="11"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="33"
+                y1="14"
+                x2="30"
+                y2="11"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="61"
+                y1="28"
+                x2="65"
+                y2="28"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="29"
+                y1="28"
+                x2="25"
+                y2="28"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span
+              style="
+                font-family: &quot;Playfair Display&quot;, serif;
+                color: white;
+                font-size: 14px;
+                font-weight: 700;
+              "
+              >Legal<span style="color: #f4b400; font-style: italic"
+                >Lite</span
+              ></span
+            >
+          </div>
+          <div class="auth-header-title">Welcome Back</div>
+          <div class="auth-header-sub">Sign in to continue to your account</div>
+        </div>
+        <div class="auth-body">
+          <div class="auth-field">
+            <label>Email Address</label>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              id="login-email"
+            />
+          </div>
+          <div class="auth-field">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              id="login-pass"
+            />
+          </div>
+          <div class="auth-forgot">Forgot Password?</div>
+          <button class="auth-submit" onclick="doLogin()">Log In</button>
+          <div class="auth-divider">or</div>
+          <button class="auth-google">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            Continue with Google
+          </button>
+          <div class="auth-switch">
+            Don't have an account?
+            <span onclick="navigate('signup')">Sign Up</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SIGN UP SCREEN ===== -->
+      <div class="screen auth-screen" id="screen-signup">
+        <div class="auth-header">
+          <button class="auth-back" onclick="navigate('splash')">←</button>
+          <div class="auth-logo-inline">
+            <svg width="22" height="22" viewBox="0 0 90 90" fill="none">
+              <rect x="43" y="54" width="4" height="20" rx="2" fill="#4a8fc4" />
+              <rect x="34" y="72" width="22" height="4" rx="2" fill="#4a8fc4" />
+              <rect
+                x="18"
+                y="40"
+                width="54"
+                height="3"
+                rx="1.5"
+                fill="#4a8fc4"
+              />
+              <path
+                d="M18 43 L10 56 L26 56 Z"
+                fill="none"
+                stroke="#4a8fc4"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <ellipse
+                cx="18"
+                cy="56"
+                rx="9"
+                ry="2.5"
+                fill="#4a8fc4"
+                opacity="0.6"
+              />
+              <path
+                d="M72 43 L64 56 L80 56 Z"
+                fill="none"
+                stroke="#4a8fc4"
+                stroke-width="2"
+                stroke-linejoin="round"
+              />
+              <ellipse
+                cx="72"
+                cy="56"
+                rx="9"
+                ry="2.5"
+                fill="#4a8fc4"
+                opacity="0.6"
+              />
+              <circle cx="45" cy="28" r="13" fill="#f4b400" />
+              <rect x="40" y="39" width="10" height="4" rx="1" fill="#e0a800" />
+              <rect x="41" y="43" width="8" height="3" rx="1" fill="#e0a800" />
+              <circle cx="40" cy="24" r="3" fill="white" opacity="0.25" />
+              <line
+                x1="45"
+                y1="10"
+                x2="45"
+                y2="6"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="57"
+                y1="14"
+                x2="60"
+                y2="11"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="33"
+                y1="14"
+                x2="30"
+                y2="11"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="61"
+                y1="28"
+                x2="65"
+                y2="28"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <line
+                x1="29"
+                y1="28"
+                x2="25"
+                y2="28"
+                stroke="#f4b400"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span
+              style="
+                font-family: &quot;Playfair Display&quot;, serif;
+                color: white;
+                font-size: 14px;
+                font-weight: 700;
+              "
+              >Legal<span style="color: #f4b400; font-style: italic"
+                >Lite</span
+              ></span
+            >
+          </div>
+          <div class="auth-header-title">Create Account</div>
+          <div class="auth-header-sub">Join thousands getting legal help</div>
+        </div>
+        <div class="auth-body">
+          <div class="auth-field">
+            <label>Full Name</label>
+            <input type="text" placeholder="Your full name" id="signup-name" />
+          </div>
+          <div class="auth-field">
+            <label>Email Address</label>
+            <input
+              type="email"
+              placeholder="you@example.com"
+              id="signup-email"
+            />
+          </div>
+          <div class="auth-field">
+            <label>Mobile Number</label>
+            <input type="tel" placeholder="+91 XXXXX XXXXX" id="signup-phone" />
+          </div>
+          <div class="auth-field">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Create a strong password"
+              id="signup-pass"
+            />
+          </div>
+          <p class="terms-note">
+            By signing up, you agree to our <span>Terms of Service</span> and
+            <span>Privacy Policy</span>
+          </p>
+          <button class="auth-submit" onclick="doSignup()">
+            Create Account
+          </button>
+          <div class="auth-divider">or</div>
+          <button class="auth-google">
+            <svg width="16" height="16" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            Sign up with Google
+          </button>
+          <div class="auth-switch">
+            Already have an account?
+            <span onclick="navigate('login')">Log In</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== HOME ===== -->
+      <div class="screen" id="screen-home">
+        <div class="scroll-content">
+          <div class="hero">
+            <div class="hero-brand">
+              <!-- Updated Logo in hero -->
+              <svg width="36" height="36" viewBox="0 0 90 90" fill="none">
+                <rect
+                  x="43"
+                  y="54"
+                  width="4"
+                  height="20"
+                  rx="2"
+                  fill="#4a8fc4"
+                />
+                <rect
+                  x="34"
+                  y="72"
+                  width="22"
+                  height="4"
+                  rx="2"
+                  fill="#4a8fc4"
+                />
+                <rect
+                  x="18"
+                  y="40"
+                  width="54"
+                  height="3"
+                  rx="1.5"
+                  fill="#4a8fc4"
+                />
+                <path
+                  d="M18 43 L10 56 L26 56 Z"
+                  fill="none"
+                  stroke="#4a8fc4"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+                <ellipse
+                  cx="18"
+                  cy="56"
+                  rx="9"
+                  ry="2.5"
+                  fill="#4a8fc4"
+                  opacity="0.6"
+                />
+                <path
+                  d="M72 43 L64 56 L80 56 Z"
+                  fill="none"
+                  stroke="#4a8fc4"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                />
+                <ellipse
+                  cx="72"
+                  cy="56"
+                  rx="9"
+                  ry="2.5"
+                  fill="#4a8fc4"
+                  opacity="0.6"
+                />
+                <circle cx="45" cy="28" r="13" fill="#f4b400" />
+                <rect
+                  x="40"
+                  y="39"
+                  width="10"
+                  height="4"
+                  rx="1"
+                  fill="#e0a800"
+                />
+                <rect
+                  x="41"
+                  y="43"
+                  width="8"
+                  height="3"
+                  rx="1"
+                  fill="#e0a800"
+                />
+                <circle cx="40" cy="24" r="3" fill="white" opacity="0.25" />
+                <line
+                  x1="45"
+                  y1="10"
+                  x2="45"
+                  y2="6"
+                  stroke="#f4b400"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="57"
+                  y1="14"
+                  x2="60"
+                  y2="11"
+                  stroke="#f4b400"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="33"
+                  y1="14"
+                  x2="30"
+                  y2="11"
+                  stroke="#f4b400"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="61"
+                  y1="28"
+                  x2="65"
+                  y2="28"
+                  stroke="#f4b400"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <line
+                  x1="29"
+                  y1="28"
+                  x2="25"
+                  y2="28"
+                  stroke="#f4b400"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <div class="hero-brand-text">
+                <h1>
+                  Legal<span style="color: #f4b400; font-style: italic"
+                    >Lite</span
+                  >
+                </h1>
+                <p>Simplifying Legal Help</p>
+              </div>
+            </div>
+            <h2>Hi, how can we<br />help you today?</h2>
+            <p>Your legal rights, simplified</p>
+            <div class="hero-stats">
+              <div class="stat">
+                <div class="val">24/7</div>
+                <div class="lbl">AI Support</div>
+              </div>
+              <div class="stat">
+                <div class="val gold">500+</div>
+                <div class="lbl">Lawyers</div>
+              </div>
+              <div class="stat">
+                <div class="val">₹99</div>
+                <div class="lbl">Starting at</div>
+              </div>
+            </div>
+          </div>
+          <div class="section"><h3>Our Services</h3></div>
+          <div class="services-grid">
+            <!-- Ask Legal AI — robot/sparkle icon -->
+            <div class="service-card" onclick="navigate('ai')">
+              <div class="icon" style="background: #e8f4fd">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="3"
+                    y="6"
+                    width="18"
+                    height="13"
+                    rx="3"
+                    fill="#0B3C5D"
+                  />
+                  <circle cx="8.5" cy="12.5" r="1.5" fill="white" />
+                  <circle cx="15.5" cy="12.5" r="1.5" fill="white" />
+                  <path
+                    d="M9 16c.83.63 1.5.9 3 .9s2.17-.27 3-.9"
+                    stroke="white"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M9 3 L9 6M15 3 L15 6"
+                    stroke="#0B3C5D"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M12 6 L12 3"
+                    stroke="#0B3C5D"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M18 9 L21 9M3 9 L0 9"
+                    stroke="#0B3C5D"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <h4>Ask Legal AI</h4>
+              <p>Get instant answers to legal questions</p>
+            </div>
+            <!-- Ask a Lawyer — speech bubble with person icon -->
+            <div class="service-card" onclick="openAskLawyerPanel()">
+              <div class="icon" style="background: #fff3cd">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="9" cy="7" r="3.5" fill="#F4B400" />
+                  <path
+                    d="M3 19c0-3.31 2.69-6 6-6s6 2.69 6 6"
+                    stroke="#F4B400"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M16 11h5M16 14h3"
+                    stroke="#F4B400"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M20 8h1a1 1 0 011 1v5a1 1 0 01-1 1h-1l-2 2v-2h-2a1 1 0 01-1-1v-2"
+                    stroke="#F4B400"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <h4>Ask a Lawyer</h4>
+              <p>Expert answer for ₹99</p>
+              <span class="badge">₹99</span>
+            </div>
+            <!-- Book a Lawyer — calendar + checkmark -->
+            <div class="service-card" onclick="navigate('lawyers')">
+              <div class="icon" style="background: #d4edda">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <rect
+                    x="3"
+                    y="5"
+                    width="18"
+                    height="16"
+                    rx="2"
+                    stroke="#28a745"
+                    stroke-width="1.8"
+                  />
+                  <path d="M3 10h18" stroke="#28a745" stroke-width="1.5" />
+                  <path
+                    d="M8 3v4M16 3v4"
+                    stroke="#28a745"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M9 15l2 2 4-4"
+                    stroke="#28a745"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <h4>Book a Lawyer</h4>
+              <p>Schedule consultation</p>
+            </div>
+            <!-- Legal Templates — document with lines -->
+            <div class="service-card" onclick="navigate('templates')">
+              <div class="icon" style="background: #f3e8ff">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+                    fill="#9966ff"
+                    opacity="0.15"
+                  />
+                  <path
+                    d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+                    stroke="#9966ff"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <polyline
+                    points="14 2 14 8 20 8"
+                    stroke="#9966ff"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <line
+                    x1="8"
+                    y1="13"
+                    x2="16"
+                    y2="13"
+                    stroke="#9966ff"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                  <line
+                    x1="8"
+                    y1="17"
+                    x2="13"
+                    y2="17"
+                    stroke="#9966ff"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <h4>Legal Templates</h4>
+              <p>Download ready-to-use documents</p>
+            </div>
+          </div>
+          <div class="section"><h3>Popular Questions</h3></div>
+          <div
+            class="question-item"
+            onclick="askQuestion('How to file a police complaint?')"
+          >
+            🚔 How to file a police complaint?
+          </div>
+          <div
+            class="question-item"
+            onclick="askQuestion('Tenant rights in India')"
+          >
+            🏠 Tenant rights in India
+          </div>
+          <div
+            class="question-item"
+            onclick="askQuestion('Consumer court process')"
+          >
+            ⚖️ Consumer court process
+          </div>
+          <div style="height: 12px"></div>
+        </div>
+        <nav class="bottom-nav">
+          <button class="nav-item active" onclick="navigate('home')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#0B3C5D"
+              stroke-width="2"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9,22 9,12 15,12 15,22" /></svg
+            ><span>Home</span>
+          </button>
+          <button class="nav-item" onclick="navigate('ai')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" /></svg
+            ><span>AI</span>
+          </button>
+          <button class="nav-item" onclick="navigate('lawyers')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg
+            ><span>Lawyers</span>
+          </button>
+          <button class="nav-item" onclick="navigate('templates')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14,2 14,8 20,8" /></svg
+            ><span>Templates</span>
+          </button>
+          <button class="nav-item" onclick="navigate('profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" /></svg
+            ><span>Profile</span>
+          </button>
+        </nav>
+
+        <!-- Ask a Lawyer: full-screen section on Home (does not open Lawyers list) -->
+        <div
+          id="ask-lawyer-panel"
+          class="ask-lawyer-panel"
+          aria-hidden="true"
+        >
+          <div class="top-bar">
+            <button
+              type="button"
+              class="back-btn"
+              onclick="closeAskLawyerPanel()"
+            >
+              ←
+            </button>
+            <div>
+              <h2>Ask a Lawyer</h2>
+              <p>Written response within 24 hrs</p>
+            </div>
+          </div>
+          <div class="scroll-content aal-body">
+            <div class="aal-fee-card">
+              <div class="aal-fee-label">CONSULTATION FEE</div>
+              <div class="aal-fee-row">
+                <span class="aal-fee-name">Expert Written Answer</span>
+                <span class="aal-fee-price">₹99 flat</span>
+              </div>
+            </div>
+            <div class="aal-how">
+              <h4>How it works</h4>
+              <p>
+                Write your legal question below. A verified lawyer will review it
+                and provide a detailed written response within 24 hours.
+              </p>
+            </div>
+            <label class="aal-label" for="aal-question">Your question</label>
+            <div class="aal-textarea-wrap">
+              <textarea
+                id="aal-question"
+                maxlength="1000"
+                placeholder="Describe your legal situation in detail. Include relevant facts, dates, and what outcome you are seeking..."
+                oninput="updateAalCounter()"
+              ></textarea>
+              <span class="aal-counter" id="aal-counter">0 / 1000 characters</span>
+            </div>
+            <div class="aal-cat-label">LEGAL CATEGORY</div>
+            <div class="aal-chips" id="aal-chips">
+              <button
+                type="button"
+                class="aal-chip selected"
+                data-cat="Consumer"
+                onclick="selectAskCategory(this)"
+              >
+                Consumer
+              </button>
+              <button
+                type="button"
+                class="aal-chip"
+                data-cat="Property"
+                onclick="selectAskCategory(this)"
+              >
+                Property
+              </button>
+              <button
+                type="button"
+                class="aal-chip"
+                data-cat="Employment"
+                onclick="selectAskCategory(this)"
+              >
+                Employment
+              </button>
+              <button
+                type="button"
+                class="aal-chip"
+                data-cat="Family"
+                onclick="selectAskCategory(this)"
+              >
+                Family
+              </button>
+              <button
+                type="button"
+                class="aal-chip"
+                data-cat="Criminal"
+                onclick="selectAskCategory(this)"
+              >
+                Criminal
+              </button>
+              <button
+                type="button"
+                class="aal-chip"
+                data-cat="Other"
+                onclick="selectAskCategory(this)"
+              >
+                Other
+              </button>
+            </div>
+            <button type="button" class="aal-submit" onclick="submitAskLawyer()">
+              Submit Question — ₹99
+            </button>
+            <div style="height: 12px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== AI SCREEN ===== -->
+      <div class="screen" id="screen-ai">
+        <div class="ai-header">
+          <div class="ai-avatar">⚖️</div>
+          <div>
+            <h2>Legal AI Assistant</h2>
+            <p>Always here to help</p>
+          </div>
+        </div>
+        <div id="suggested-section" class="suggested-chips">
+          <div class="suggested-label">Try asking:</div>
+          <div
+            class="chip"
+            onclick="askQuestion('How to file a police complaint?')"
+          >
+            How to file a police complaint?
+          </div>
+          <div class="chip" onclick="askQuestion('Tenant rights in India')">
+            Tenant rights in India
+          </div>
+          <div class="chip" onclick="askQuestion('Consumer court process')">
+            Consumer court process
+          </div>
+          <div
+            class="chip"
+            onclick="askQuestion('How to register an FIR online?')"
+          >
+            How to register an FIR online?
+          </div>
+        </div>
+        <div class="chat-area" id="chat-area">
+          <div class="msg ai">
+            <div class="msg-bubble">
+              Hello! I'm your AI legal assistant. I can help you understand your
+              legal rights and guide you through various legal processes. How
+              can I help you today?
+            </div>
+            <div class="msg-time">Now</div>
+          </div>
+        </div>
+        <div class="chat-input-wrap">
+          <input
+            class="chat-input"
+            id="chat-input"
+            placeholder="Ask your legal question..."
+            onkeydown="handleKey(event)"
+          />
+          <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+        <nav class="bottom-nav">
+          <button class="nav-item" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9,22 9,12 15,12 15,22" /></svg
+            ><span>Home</span>
+          </button>
+          <button class="nav-item active" onclick="navigate('ai')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#0B3C5D"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" /></svg
+            ><span>AI</span>
+          </button>
+          <button class="nav-item" onclick="navigate('lawyers')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg
+            ><span>Lawyers</span>
+          </button>
+          <button class="nav-item" onclick="navigate('templates')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14,2 14,8 20,8" /></svg
+            ><span>Templates</span>
+          </button>
+          <button class="nav-item" onclick="navigate('profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" /></svg
+            ><span>Profile</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- ===== LAWYERS SCREEN ===== -->
+      <div class="screen" id="screen-lawyers">
+        <div class="top-bar">
+          <h2 style="line-height: 1.1">
+            Book a Lawyer<br /><span
+              style="font-size: 10px; font-weight: 400; opacity: 0.8"
+              >Connect with verified legal experts</span
+            >
+          </h2>
+        </div>
+        <div class="filter-bar">
+          <button class="filter-btn active">All</button>
+          <button class="filter-btn">Consumer</button>
+          <button class="filter-btn">Property</button>
+          <button class="filter-btn">Employment</button>
+          <button class="filter-btn">Family</button>
+        </div>
+        <div class="scroll-content">
+          <div class="lawyer-card">
+            <div class="lawyer-header">
+              <div class="lawyer-avatar" style="background: #0b3c5d">P</div>
+              <div class="lawyer-info">
+                <h4>Adv. Priya Sharma</h4>
+                <p>Consumer Rights & Civil Law</p>
+                <div class="lawyer-meta">
+                  <span>📅 12 yrs</span><span>📍 Delhi</span>
+                </div>
+                <div class="avail today">● Available today</div>
+              </div>
+            </div>
+            <div class="lawyer-footer">
+              <div>
+                <div class="rating">
+                  ⭐ 4.8 <span style="color: #999">(156)</span>
+                </div>
+                <div class="price-info">Starting at</div>
+                <div class="price-val">₹499</div>
+              </div>
+              <button
+                class="book-btn"
+                onclick="openBooking('Adv. Priya Sharma', 499)"
+              >
+                Book
+              </button>
+            </div>
+          </div>
+          <div class="lawyer-card">
+            <div class="lawyer-header">
+              <div class="lawyer-avatar" style="background: #1a5f8a">R</div>
+              <div class="lawyer-info">
+                <h4>Adv. Rajesh Kumar</h4>
+                <p>Property & Tenant Disputes</p>
+                <div class="lawyer-meta">
+                  <span>📅 8 yrs</span><span>📍 Mumbai</span>
+                </div>
+                <div class="avail tomorrow">● Available tomorrow</div>
+              </div>
+            </div>
+            <div class="lawyer-footer">
+              <div>
+                <div class="rating">
+                  ⭐ 4.6 <span style="color: #999">(89)</span>
+                </div>
+                <div class="price-info">Starting at</div>
+                <div class="price-val">₹399</div>
+              </div>
+              <button
+                class="book-btn"
+                onclick="openBooking('Adv. Rajesh Kumar', 399)"
+              >
+                Book
+              </button>
+            </div>
+          </div>
+          <div class="lawyer-card">
+            <div class="lawyer-header">
+              <div class="lawyer-avatar" style="background: #2d6a4f">S</div>
+              <div class="lawyer-info">
+                <h4>Adv. Sneha Patel</h4>
+                <p>Employment & Labor Law</p>
+                <div class="lawyer-meta">
+                  <span>📅 10 yrs</span><span>📍 Bangalore</span>
+                </div>
+                <div class="avail today">● Available today</div>
+              </div>
+            </div>
+            <div class="lawyer-footer">
+              <div>
+                <div class="rating">
+                  ⭐ 4.9 <span style="color: #999">(203)</span>
+                </div>
+                <div class="price-info">Starting at</div>
+                <div class="price-val">₹599</div>
+              </div>
+              <button
+                class="book-btn"
+                onclick="openBooking('Adv. Sneha Patel', 599)"
+              >
+                Book
+              </button>
+            </div>
+          </div>
+          <div class="lawyer-card">
+            <div class="lawyer-header">
+              <div class="lawyer-avatar" style="background: #7c3aed">A</div>
+              <div class="lawyer-info">
+                <h4>Adv. Amit Verma</h4>
+                <p>Family Law & Divorce</p>
+                <div class="lawyer-meta">
+                  <span>📅 15 yrs</span><span>📍 Pune</span>
+                </div>
+                <div class="avail later">● Available in 2 days</div>
+              </div>
+            </div>
+            <div class="lawyer-footer">
+              <div>
+                <div class="rating">
+                  ⭐ 4.7 <span style="color: #999">(178)</span>
+                </div>
+                <div class="price-info">Starting at</div>
+                <div class="price-val">₹549</div>
+              </div>
+              <button
+                class="book-btn"
+                onclick="openBooking('Adv. Amit Verma', 549)"
+              >
+                Book
+              </button>
+            </div>
+          </div>
+          <div style="height: 12px"></div>
+        </div>
+        <nav class="bottom-nav">
+          <button class="nav-item" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9,22 9,12 15,12 15,22" /></svg
+            ><span>Home</span>
+          </button>
+          <button class="nav-item" onclick="navigate('ai')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" /></svg
+            ><span>AI</span>
+          </button>
+          <button class="nav-item active" onclick="navigate('lawyers')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#0B3C5D"
+              stroke-width="2"
+            >
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg
+            ><span>Lawyers</span>
+          </button>
+          <button class="nav-item" onclick="navigate('templates')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14,2 14,8 20,8" /></svg
+            ><span>Templates</span>
+          </button>
+          <button class="nav-item" onclick="navigate('profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" /></svg
+            ><span>Profile</span>
+          </button>
+        </nav>
+        <!-- Booking Modal -->
+        <div
+          class="modal-overlay"
+          id="booking-modal"
+          onclick="closeBooking(event)"
+        >
+          <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-header">
+              <h3>Schedule Consultation</h3>
+              <p id="modal-lawyer-name">Adv. Priya Sharma</p>
+            </div>
+            <div class="sub-header">Select Date</div>
+            <div class="date-row">
+              <button class="date-pill" onclick="selectDate(this)">
+                <span class="d-name">Wed</span><span class="d-num">1</span>
+              </button>
+              <button class="date-pill selected" onclick="selectDate(this)">
+                <span class="d-name">Thu</span><span class="d-num">2</span>
+              </button>
+              <button class="date-pill" onclick="selectDate(this)">
+                <span class="d-name">Fri</span><span class="d-num">3</span>
+              </button>
+              <button class="date-pill" onclick="selectDate(this)">
+                <span class="d-name">Sat</span><span class="d-num">4</span>
+              </button>
+              <button class="date-pill" onclick="selectDate(this)">
+                <span class="d-name">Sun</span><span class="d-num">5</span>
+              </button>
+              <button class="date-pill" onclick="selectDate(this)">
+                <span class="d-name">Mon</span><span class="d-num">6</span>
+              </button>
+              <button class="date-pill" onclick="selectDate(this)">
+                <span class="d-name">Tue</span><span class="d-num">7</span>
+              </button>
+            </div>
+            <div class="sub-header">Select Time</div>
+            <div class="time-grid">
+              <button class="time-btn selected" onclick="selectTime(this)">
+                9:00 AM
+              </button>
+              <button class="time-btn" onclick="selectTime(this)">
+                10:00 AM
+              </button>
+              <button class="time-btn" onclick="selectTime(this)">
+                11:00 AM
+              </button>
+              <button class="time-btn" onclick="selectTime(this)">
+                2:00 PM
+              </button>
+              <button class="time-btn" onclick="selectTime(this)">
+                3:00 PM
+              </button>
+              <button class="time-btn" onclick="selectTime(this)">
+                4:00 PM
+              </button>
+            </div>
+            <div class="fee-row">
+              <span>Consultation Fee</span>
+              <span class="fee-val" id="modal-fee">₹499</span>
+            </div>
+            <button class="confirm-btn" onclick="goToPayment()">
+              Confirm & Pay
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PAYMENT SCREEN ===== -->
+      <div class="screen" id="screen-payment">
+        <div class="top-bar">
+          <button type="button" class="back-btn" onclick="paymentBack()">
+            ←
+          </button>
+          <div>
+            <h2>Payment</h2>
+            <p id="pay-screen-subtitle">Complete your booking</p>
+          </div>
+        </div>
+        <div class="scroll-content">
+          <div class="order-summary">
+            <h3>Order Summary</h3>
+            <div class="order-row">
+              <span class="pay-line-main" id="pay-line-desc"
+                >Consultation with lawyer</span
+              ><span id="pay-line-price">₹499</span>
+            </div>
+            <div class="order-row">
+              <span class="lbl">Platform Fee</span
+              ><span id="pay-platform">₹0</span>
+            </div>
+            <div class="order-row">
+              <span class="lbl">GST (18%)</span><span id="pay-gst">₹90</span>
+            </div>
+            <div class="order-row total">
+              <span>Total Amount</span
+              ><span id="pay-total" class="pay-total-amt">₹589</span>
+            </div>
+          </div>
+          <div class="pay-methods">
+            <h3>Select Payment Method</h3>
+            <div class="pay-option selected" onclick="selectPayMethod(this)">
+              <span class="pay-icon">📱</span>
+              <div class="pay-label">
+                <div class="pl-name">UPI</div>
+                <div class="pl-sub">Pay using any UPI app</div>
+              </div>
+              <div class="pay-radio sel"></div>
+            </div>
+            <div class="pay-option" onclick="selectPayMethod(this)">
+              <span class="pay-icon">💳</span>
+              <div class="pay-label">
+                <div class="pl-name">Credit/Debit Card</div>
+                <div class="pl-sub">Visa, Mastercard, Rupay</div>
+              </div>
+              <div class="pay-radio"></div>
+            </div>
+            <div class="pay-option" onclick="selectPayMethod(this)">
+              <span class="pay-icon">🏦</span>
+              <div class="pay-label">
+                <div class="pl-name">Net Banking</div>
+                <div class="pl-sub">All major banks supported</div>
+              </div>
+              <div class="pay-radio"></div>
+            </div>
+          </div>
+          <div class="pay-upi-block" id="pay-upi-block">
+            <label for="pay-upi-input">Enter UPI ID</label>
+            <input
+              type="text"
+              id="pay-upi-input"
+              placeholder="yourname@upi"
+              autocomplete="off"
+            />
+            <p class="pay-hint">e.g., 9876543210@paytm</p>
+            <p class="pay-ssl">🔒 Secured by 256-bit SSL encryption</p>
+          </div>
+          <div class="pay-footer-note">
+            By proceeding, you agree to our Terms &amp; Conditions and Privacy
+            Policy
+          </div>
+          <div class="pay-btn-wrap">
+            <button id="pay-btn" onclick="processPayment()">Pay ₹589</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SUCCESS SCREEN ===== -->
+      <div class="screen" id="screen-success">
+        <div
+          style="
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+          "
+        >
+          <div class="success-screen">
+            <div class="success-circle">✓</div>
+            <h2 id="success-title">Booking Confirmed!</h2>
+            <p id="success-msg">
+              Your consultation has been successfully booked. You'll receive a
+              confirmation shortly.
+            </p>
+            <div class="success-detail">
+              <div class="sd-row">
+                <span class="lbl" id="success-label-primary">Lawyer</span
+                ><span id="success-consultation">—</span>
+              </div>
+              <div class="sd-row">
+                <span class="lbl">Amount Paid</span
+                ><span id="success-price">—</span>
+              </div>
+              <div class="sd-row">
+                <span class="lbl">Date</span
+                ><span id="success-date">—</span>
+              </div>
+              <div class="sd-row">
+                <span class="lbl">Time</span
+                ><span id="success-time">—</span>
+              </div>
+            </div>
+            <button class="success-home" onclick="navigate('home')">
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TEMPLATES SCREEN ===== -->
+      <div class="screen" id="screen-templates">
+        <div class="top-bar">
+          <h2 style="line-height: 1.1">
+            Legal Templates<br /><span
+              style="font-size: 10px; font-weight: 400; opacity: 0.8"
+              >Download and customize legal documents</span
+            >
+          </h2>
+        </div>
+        <div class="filter-bar">
+          <button class="filter-btn active">All</button>
+          <button class="filter-btn">Rental</button>
+          <button class="filter-btn">Complaint</button>
+          <button class="filter-btn">Affidavit</button>
+        </div>
+        <div class="scroll-content">
+          <div class="promo-banner">
+            <div class="promo-icon">📄</div>
+            <div>
+              <h4>Free Templates</h4>
+              <p>All templates reviewed by legal experts and ready to use</p>
+            </div>
+          </div>
+          <div class="template-item" onclick="navigate('rental-agreement')">
+            <div class="template-icon">📋</div>
+            <div class="template-info">
+              <h4>
+                House Rental Agreement
+                <span class="template-badge">Popular</span>
+              </h4>
+              <p>
+                Legally binding rental agreement between landlord and tenant
+              </p>
+              <div class="downloads">⬇ 2,345 downloads</div>
+            </div>
+            <div class="template-arrow">›</div>
+          </div>
+          <div class="template-item">
+            <div class="template-icon">📋</div>
+            <div class="template-info">
+              <h4>Eviction Notice</h4>
+              <p>Legal notice for tenant eviction with proper terms</p>
+              <div class="downloads">⬇ 876 downloads</div>
+            </div>
+            <div class="template-arrow">›</div>
+          </div>
+          <div class="template-item">
+            <div class="template-icon">📋</div>
+            <div class="template-info">
+              <h4>
+                Consumer Complaint <span class="template-badge">Popular</span>
+              </h4>
+              <p>File complaint against defective products or poor service</p>
+              <div class="downloads">⬇ 1,543 downloads</div>
+            </div>
+            <div class="template-arrow">›</div>
+          </div>
+          <div class="template-item">
+            <div class="template-icon">📋</div>
+            <div class="template-info">
+              <h4>Police Complaint (FIR)</h4>
+              <p>File First Information Report with police</p>
+              <div class="downloads">⬇ 987 downloads</div>
+            </div>
+            <div class="template-arrow">›</div>
+          </div>
+          <div class="template-item">
+            <div class="template-icon">📋</div>
+            <div class="template-info">
+              <h4>
+                Name Change Affidavit
+                <span class="template-badge">Popular</span>
+              </h4>
+              <p>Legal document for official name change</p>
+              <div class="downloads">⬇ 1,234 downloads</div>
+            </div>
+            <div class="template-arrow">›</div>
+          </div>
+          <div class="template-item">
+            <div class="template-icon">📋</div>
+            <div class="template-info">
+              <h4>Address Proof Affidavit</h4>
+              <p>Sworn statement for address verification</p>
+              <div class="downloads">⬇ 654 downloads</div>
+            </div>
+            <div class="template-arrow">›</div>
+          </div>
+          <div class="ai-help-banner">
+            <h4>Need help with templates?</h4>
+            <p>
+              Our AI assistant can guide you through filling out any template
+            </p>
+          </div>
+          <div style="height: 12px"></div>
+        </div>
+        <nav class="bottom-nav">
+          <button class="nav-item" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9,22 9,12 15,12 15,22" /></svg
+            ><span>Home</span>
+          </button>
+          <button class="nav-item" onclick="navigate('ai')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" /></svg
+            ><span>AI</span>
+          </button>
+          <button class="nav-item" onclick="navigate('lawyers')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg
+            ><span>Lawyers</span>
+          </button>
+          <button class="nav-item active" onclick="navigate('templates')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#0B3C5D"
+              stroke-width="2"
+            >
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14,2 14,8 20,8" /></svg
+            ><span>Templates</span>
+          </button>
+          <button class="nav-item" onclick="navigate('profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" /></svg
+            ><span>Profile</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- ===== RENTAL AGREEMENT FORM ===== -->
+      <div class="screen" id="screen-rental-agreement">
+        <div class="top-bar">
+          <button class="back-btn" onclick="navigate('templates')">←</button>
+          <div>
+            <h2>House Rental Agreement</h2>
+            <p>Create a legally binding rental agreement</p>
+          </div>
+        </div>
+        <div class="scroll-content">
+          <div class="form-section">
+            <div class="info-box">
+              <p>
+                • Fill in all the required fields below<br />• Review your
+                information carefully<br />• Click "Generate PDF" to download<br />•
+                Print and sign the document
+              </p>
+            </div>
+            <div class="field-group">
+              <label>Landlord Name</label
+              ><input
+                type="text"
+                placeholder="Enter landlord's full name"
+                id="f-landlord"
+              />
+            </div>
+            <div class="field-group">
+              <label>Tenant Name</label
+              ><input
+                type="text"
+                placeholder="Enter tenant's full name"
+                id="f-tenant"
+              />
+            </div>
+            <div class="field-group">
+              <label>Property Address</label
+              ><input
+                type="text"
+                placeholder="Complete property address"
+                id="f-address"
+              />
+            </div>
+            <div class="field-group">
+              <label>Monthly Rent (₹)</label
+              ><input
+                type="number"
+                placeholder="5000"
+                id="f-rent"
+                value="5000"
+              />
+            </div>
+            <div class="field-group">
+              <label>Security Deposit (₹)</label
+              ><input
+                type="number"
+                placeholder="10000"
+                id="f-deposit"
+                value="10000"
+              />
+            </div>
+            <div class="field-group">
+              <label>Lease Start Date</label><input type="date" id="f-date" />
+            </div>
+            <div class="field-group">
+              <label>Lease Duration (months)</label
+              ><input
+                type="number"
+                placeholder="11"
+                id="f-duration"
+                value="11"
+              />
+            </div>
+            <button class="gen-btn" onclick="generatePDF()">
+              ⬇ Generate PDF
+            </button>
+            <button class="ai-btn" onclick="navigate('ai')">
+              Need Help? Ask AI
+            </button>
+            <div class="preview-box">
+              <h4>Document Preview</h4>
+              <div class="preview-row">
+                <span class="key">Landlord Name:</span
+                ><span id="prev-landlord">—</span>
+              </div>
+              <div class="preview-row">
+                <span class="key">Tenant Name:</span
+                ><span id="prev-tenant">—</span>
+              </div>
+              <div class="preview-row">
+                <span class="key">Property Address:</span
+                ><span id="prev-address">—</span>
+              </div>
+              <div class="preview-more">+ 4 more fields</div>
+            </div>
+          </div>
+          <div style="height: 12px"></div>
+        </div>
+        <nav class="bottom-nav">
+          <button class="nav-item" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9,22 9,12 15,12 15,22" /></svg
+            ><span>Home</span>
+          </button>
+          <button class="nav-item" onclick="navigate('ai')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" /></svg
+            ><span>AI</span>
+          </button>
+          <button class="nav-item" onclick="navigate('lawyers')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg
+            ><span>Lawyers</span>
+          </button>
+          <button class="nav-item active" onclick="navigate('templates')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#0B3C5D"
+              stroke-width="2"
+            >
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14,2 14,8 20,8" /></svg
+            ><span>Templates</span>
+          </button>
+          <button class="nav-item" onclick="navigate('profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" /></svg
+            ><span>Profile</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- ===== PROFILE SCREEN ===== -->
+      <div class="screen" id="screen-profile">
+        <div class="profile-hero">
+          <div class="avatar-circle">RK</div>
+          <div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 2px;
+              "
+            >
+              <svg width="12" height="12" viewBox="0 0 90 90" fill="none">
+                <circle cx="45" cy="28" r="13" fill="#f4b400" />
+                <rect
+                  x="18"
+                  y="40"
+                  width="54"
+                  height="3"
+                  rx="1.5"
+                  fill="#4a8fc4"
+                />
+              </svg>
+              <span style="color: rgba(255, 255, 255, 0.7); font-size: 11px"
+                >Legal<span style="color: #f4b400; font-style: italic"
+                  >Lite</span
+                ></span
+              >
+            </div>
+            <div class="profile-name">Rahul Kumar</div>
+            <div class="profile-email">rahul@example.com</div>
+            <div class="profile-email">+91 98765 43210</div>
+          </div>
+        </div>
+        <div class="scroll-content">
+          <div class="stats-row">
+            <div class="profile-stat">
+              <div class="ps-val">12</div>
+              <div class="ps-lbl">Queries</div>
+            </div>
+            <div class="profile-stat">
+              <div class="ps-val">3</div>
+              <div class="ps-lbl">Bookings</div>
+            </div>
+            <div class="profile-stat">
+              <div class="ps-val">8</div>
+              <div class="ps-lbl">Templates</div>
+            </div>
+          </div>
+          <div class="quick-access">
+            <h3>Quick Access</h3>
+            <div class="quick-btns">
+              <div class="quick-btn" onclick="navigate('ai')">
+                <div class="qb-icon">🤖</div>
+                <span>My Queries</span>
+              </div>
+              <div class="quick-btn" onclick="navigate('lawyers')">
+                <div class="qb-icon">📅</div>
+                <span>Bookings</span>
+              </div>
+              <div class="quick-btn" onclick="navigate('templates')">
+                <div class="qb-icon">📄</div>
+                <span>Saved</span>
+              </div>
+            </div>
+          </div>
+          <div class="activity-list">
+            <h3>Recent Activity</h3>
+            <div class="activity-item">
+              <div>
+                <div class="act-text">Asked about tenant rights</div>
+                <div class="act-time">2 days ago</div>
+              </div>
+              <span class="act-badge answered">Answered</span>
+            </div>
+            <div class="activity-item">
+              <div>
+                <div class="act-text">Consultation with Adv. Priya Sharma</div>
+                <div class="act-time">5 days ago</div>
+              </div>
+              <span class="act-badge completed">Completed</span>
+            </div>
+            <div class="activity-item">
+              <div>
+                <div class="act-text">Downloaded Rental Agreement</div>
+                <div class="act-time">1 week ago</div>
+              </div>
+              <span class="act-badge downloaded">Downloaded</span>
+            </div>
+          </div>
+          <div class="settings-list">
+            <h3>Settings</h3>
+            <div class="setting-item">
+              <div class="si-left">
+                <span class="si-icon">🔔</span>Notifications
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px">
+                <div class="notif-badge">1</div>
+                <span>›</span>
+              </div>
+            </div>
+            <div class="setting-item">
+              <div class="si-left">
+                <span class="si-icon">❓</span>Help & Support
+              </div>
+              <span>›</span>
+            </div>
+            <div class="setting-item">
+              <div class="si-left">
+                <span class="si-icon">📜</span>Terms & Privacy
+              </div>
+              <span>›</span>
+            </div>
+            <div class="setting-item logout-item" onclick="navigate('splash')">
+              <div class="si-left"><span class="si-icon">🚪</span>Logout</div>
+              <span>›</span>
+            </div>
+          </div>
+          <div class="version-note">
+            Legal Lite v3.0.0 · Made with care for your legal needs
+          </div>
+        </div>
+        <nav class="bottom-nav">
+          <button class="nav-item" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9,22 9,12 15,12 15,22" /></svg
+            ><span>Home</span>
+          </button>
+          <button class="nav-item" onclick="navigate('ai')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4M12 8h.01" /></svg
+            ><span>AI</span>
+          </button>
+          <button class="nav-item" onclick="navigate('lawyers')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg
+            ><span>Lawyers</span>
+          </button>
+          <button class="nav-item" onclick="navigate('templates')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14,2 14,8 20,8" /></svg
+            ><span>Templates</span>
+          </button>
+          <button class="nav-item active" onclick="navigate('profile')">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#0B3C5D"
+              stroke-width="2"
+            >
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" /></svg
+            ><span>Profile</span>
+          </button>
+        </nav>
+      </div>
+      <div
+        id="app-dialog-overlay"
+        class="app-dialog-overlay"
+        aria-hidden="true"
+        onclick="closeAppDialog(event)"
+      >
+        <div
+          class="app-dialog"
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="app-dialog-title"
+          aria-describedby="app-dialog-msg"
+          onclick="event.stopPropagation()"
+        >
+          <div class="app-dialog-icon">⚖️</div>
+          <h3 id="app-dialog-title" class="app-dialog-title">Legal Lite</h3>
+          <p id="app-dialog-msg" class="app-dialog-msg"></p>
+          <button
+            type="button"
+            class="app-dialog-btn"
+            onclick="closeAppDialog()"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- end phone-wrap -->
+
+    <script>
+      let currentLawyer = "Adv. Priya Sharma";
+      let currentFee = 499;
+      /** @type {"booking"|"written"} */
+      let checkoutMode = "booking";
+      let chatHistory = [];
+
+      const fallbackResponses = {
+        default:
+          "I understand your question about legal matters. In India, legal procedures can vary depending on the specific situation. Here's what you need to know:\n\n1. First, gather all relevant documents and evidence\n2. Consult with a lawyer for specific guidance\n3. Follow the proper legal procedures for your case\n\nWould you like more specific information about any of these steps?",
+        police:
+          "To file a police complaint in India:\n\n1. Visit your nearest police station\n2. Speak to the officer in charge\n3. Provide details of the incident in writing\n4. Obtain a copy of your FIR (First Information Report)\n5. Note down the FIR number for future reference\n\nYou can also file an online FIR on your state police website for many offences.",
+        tenant:
+          "As a tenant in India, you have these key rights:\n\n1. Right to a written rental agreement\n2. Protection from illegal eviction\n3. Right to essential services (water, electricity)\n4. Refund of security deposit after leaving\n5. Notice period before eviction (usually 1–3 months)\n\nThe Rent Control Act applies in most states and protects tenants from arbitrary rent hikes.",
+        consumer:
+          "The Consumer Court process in India:\n\n1. File a complaint at District Consumer Forum (claims up to ₹1 crore)\n2. Attach all purchase receipts and evidence\n3. Pay the nominal court fee\n4. Attend hearings as scheduled\n5. Judgment usually within 3–5 months\n\nYou can also file complaints online at consumerhelpline.gov.in",
+      };
+
+      function getFallback(question) {
+        const q = question.toLowerCase();
+        if (
+          q.includes("police") ||
+          q.includes("fir") ||
+          q.includes("complaint")
+        )
+          return fallbackResponses.police;
+        if (
+          q.includes("tenant") ||
+          q.includes("rent") ||
+          q.includes("landlord")
+        )
+          return fallbackResponses.tenant;
+        if (q.includes("consumer") || q.includes("court"))
+          return fallbackResponses.consumer;
+        return fallbackResponses.default;
+      }
+
+      function navigate(screen) {
+        const next = document.getElementById("screen-" + screen);
+        if (!next) return;
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
+        next.classList.add("active");
+      }
+
+      function escapeHtml(text) {
+        const d = document.createElement("div");
+        d.textContent = text;
+        return d.innerHTML;
+      }
+
+      function showAppDialog(message, title) {
+        const titleEl = document.getElementById("app-dialog-title");
+        const msgEl = document.getElementById("app-dialog-msg");
+        const o = document.getElementById("app-dialog-overlay");
+        if (!titleEl || !msgEl || !o) return;
+        titleEl.textContent = title || "Legal Lite";
+        msgEl.textContent = message;
+        o.classList.add("open");
+        o.setAttribute("aria-hidden", "false");
+      }
+
+      function closeAppDialog(e) {
+        if (e && e.target !== e.currentTarget) return;
+        const o = document.getElementById("app-dialog-overlay");
+        if (o) {
+          o.classList.remove("open");
+          o.setAttribute("aria-hidden", "true");
+        }
+      }
+
+      function getSelectedBookingDateTime() {
+        const modal = document.getElementById("booking-modal");
+        if (!modal) return { dateLabel: "—", timeLabel: "—" };
+        const pill = modal.querySelector(".date-pill.selected");
+        const timeBtn = modal.querySelector(".time-btn.selected");
+        let dateLabel = "—";
+        if (pill) {
+          const dName = pill.querySelector(".d-name")?.textContent?.trim() || "";
+          const dNum = pill.querySelector(".d-num")?.textContent?.trim() || "";
+          dateLabel = [dName, dNum].filter(Boolean).join(" ") || "—";
+        }
+        const timeLabel = timeBtn?.textContent?.trim() || "—";
+        return { dateLabel, timeLabel };
+      }
+
+      function doLogin() {
+        const email = document.getElementById("login-email").value.trim();
+        if (!email) {
+          showAppDialog("Please enter your email to continue.", "Sign in");
+          return;
+        }
+        navigate("home");
+      }
+
+      function doSignup() {
+        const name = document.getElementById("signup-name").value.trim();
+        if (!name) {
+          showAppDialog("Please enter your full name to create an account.", "Create account");
+          return;
+        }
+        navigate("home");
+      }
+
+      function openBooking(lawyer, fee) {
+        currentLawyer = lawyer;
+        currentFee = fee;
+        document.getElementById("modal-lawyer-name").textContent = lawyer;
+        document.getElementById("modal-fee").textContent = "₹" + fee;
+        document.getElementById("booking-modal").classList.add("open");
+      }
+
+      function closeBooking(e) {
+        if (e.target === document.getElementById("booking-modal"))
+          document.getElementById("booking-modal").classList.remove("open");
+      }
+
+      function selectDate(btn) {
+        document
+          .querySelectorAll(".date-pill")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+      }
+
+      function selectTime(btn) {
+        document
+          .querySelectorAll(".time-btn")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+      }
+
+      function applyPaymentSummary() {
+        const gst = Math.round(currentFee * 0.18);
+        const total = currentFee + gst;
+        const descEl = document.getElementById("pay-line-desc");
+        const subEl = document.getElementById("pay-screen-subtitle");
+        if (checkoutMode === "written") {
+          descEl.textContent = "Expert Written Answer";
+          if (subEl) subEl.textContent = "Complete your transaction securely";
+        } else {
+          descEl.textContent = "Consultation with " + currentLawyer;
+          if (subEl) subEl.textContent = "Complete your booking";
+        }
+        document.getElementById("pay-line-price").textContent =
+          "₹" + currentFee;
+        document.getElementById("pay-platform").textContent = "₹0";
+        document.getElementById("pay-gst").textContent = "₹" + gst;
+        const totalEl = document.getElementById("pay-total");
+        totalEl.textContent = "₹" + total;
+        totalEl.classList.add("pay-total-amt");
+        document.getElementById("pay-btn").textContent = "Pay ₹" + total;
+      }
+
+      function goToPayment() {
+        document.getElementById("booking-modal").classList.remove("open");
+        checkoutMode = "booking";
+        applyPaymentSummary();
+        navigate("payment");
+      }
+
+      function paymentBack() {
+        if (checkoutMode === "written") {
+          navigate("home");
+        } else {
+          navigate("lawyers");
+        }
+      }
+
+      function openAskLawyerPanel() {
+        const p = document.getElementById("ask-lawyer-panel");
+        if (!p) return;
+        p.classList.add("open");
+        p.setAttribute("aria-hidden", "false");
+        updateAalCounter();
+      }
+
+      function closeAskLawyerPanel() {
+        const p = document.getElementById("ask-lawyer-panel");
+        if (!p) return;
+        p.classList.remove("open");
+        p.setAttribute("aria-hidden", "true");
+      }
+
+      function updateAalCounter() {
+        const ta = document.getElementById("aal-question");
+        const c = document.getElementById("aal-counter");
+        if (!ta || !c) return;
+        c.textContent = ta.value.length + " / 1000 characters";
+      }
+
+      function selectAskCategory(btn) {
+        const wrap = document.getElementById("aal-chips");
+        if (!wrap) return;
+        wrap.querySelectorAll(".aal-chip").forEach((b) =>
+          b.classList.remove("selected"),
+        );
+        btn.classList.add("selected");
+      }
+
+      function submitAskLawyer() {
+        const ta = document.getElementById("aal-question");
+        const text = ta ? ta.value.trim() : "";
+        if (text.length < 20) {
+          showAppDialog(
+            "Please describe your legal question in more detail (at least 20 characters) so a lawyer can help you properly.",
+            "A bit more detail",
+          );
+          return;
+        }
+        closeAskLawyerPanel();
+        checkoutMode = "written";
+        currentFee = 99;
+        currentLawyer = "Expert Written Answer";
+        applyPaymentSummary();
+        navigate("payment");
+      }
+
+      function selectPayMethod(el) {
+        document.querySelectorAll(".pay-option").forEach((o) => {
+          o.classList.remove("selected");
+          o.querySelector(".pay-radio").classList.remove("sel");
+        });
+        el.classList.add("selected");
+        el.querySelector(".pay-radio").classList.add("sel");
+      }
+
+      function processPayment() {
+        const btn = document.getElementById("pay-btn");
+        btn.textContent = "Processing...";
+        btn.disabled = true;
+        setTimeout(() => {
+          const gst = Math.round(currentFee * 0.18);
+          const total = currentFee + gst;
+          const titleEl = document.getElementById("success-title");
+          const msgEl = document.getElementById("success-msg");
+          const lblEl = document.getElementById("success-label-primary");
+          if (checkoutMode === "written") {
+            if (titleEl) titleEl.textContent = "Payment Successful!";
+            if (msgEl)
+              msgEl.textContent =
+                "Your question is received. A lawyer will send a written response within 24 hours.";
+            if (lblEl) lblEl.textContent = "Service";
+            document.getElementById("success-consultation").textContent =
+              "Expert Written Answer";
+            document.getElementById("success-date").textContent =
+              "Within 24 hours";
+            document.getElementById("success-time").textContent =
+              "Written response";
+          } else {
+            if (titleEl) titleEl.textContent = "Booking Confirmed!";
+            if (msgEl)
+              msgEl.textContent =
+                "Your consultation has been successfully booked. You'll receive a confirmation shortly.";
+            if (lblEl) lblEl.textContent = "Lawyer";
+            document.getElementById("success-consultation").textContent =
+              "Consultation with " + currentLawyer;
+            const bt = getSelectedBookingDateTime();
+            document.getElementById("success-date").textContent = bt.dateLabel;
+            document.getElementById("success-time").textContent = bt.timeLabel;
+          }
+          document.getElementById("success-price").textContent = "₹" + total;
+          btn.disabled = false;
+          navigate("success");
+        }, 1500);
+      }
+
+      function askQuestion(q) {
+        navigate("ai");
+        setTimeout(() => {
+          addUserMsg(q);
+          sendToAI(q);
+        }, 100);
+      }
+
+      function handleKey(e) {
+        if (e.key === "Enter") sendMessage();
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("chat-input");
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = "";
+        addUserMsg(text);
+        sendToAI(text);
+      }
+
+      function addUserMsg(text) {
+        const chatArea = document.getElementById("chat-area");
+        const suggested = document.getElementById("suggested-section");
+        if (suggested) suggested.style.display = "none";
+        const now = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const div = document.createElement("div");
+        div.className = "msg user";
+        div.innerHTML = `<div class="msg-bubble">${escapeHtml(text)}</div><div class="msg-time">${now}</div>`;
+        chatArea.appendChild(div);
+        chatHistory.push({ role: "user", content: text });
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+
+      function showTyping() {
+        const chatArea = document.getElementById("chat-area");
+        const div = document.createElement("div");
+        div.className = "msg ai";
+        div.id = "typing-bubble";
+        div.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+        chatArea.appendChild(div);
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+
+      function removeTyping() {
+        const t = document.getElementById("typing-bubble");
+        if (t) t.remove();
+      }
+
+      function addAIMsg(reply) {
+        removeTyping();
+        chatHistory.push({ role: "assistant", content: reply });
+        const chatArea = document.getElementById("chat-area");
+        const now = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const div = document.createElement("div");
+        div.className = "msg ai";
+        div.innerHTML = `<div class="msg-bubble">${escapeHtml(reply).replace(/\n/g, "<br>")}</div><div class="msg-time">${now}</div>`;
+        chatArea.appendChild(div);
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }
+
+      const AI_DELAY_MS = 900;
+
+      function sendToAI(text) {
+        showTyping();
+        setTimeout(
+          () => addAIMsg(getFallback(text)),
+          AI_DELAY_MS,
+        );
+      }
+
+      ["f-landlord", "f-tenant", "f-address"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("input", function () {
+          const map = {
+            "f-landlord": "prev-landlord",
+            "f-tenant": "prev-tenant",
+            "f-address": "prev-address",
+          };
+          document.getElementById(map[id]).textContent = this.value || "—";
+        });
+      });
+
+      function generatePDF() {
+        const landlord = document.getElementById("f-landlord").value;
+        const tenant = document.getElementById("f-tenant").value;
+        if (!landlord || !tenant) {
+          showAppDialog(
+            "Please fill in at least the landlord and tenant names before generating the document.",
+            "Missing information",
+          );
+          return;
+        }
+        showAppDialog(
+          "PDF generated. In a full app, your rental agreement would download automatically.",
+          "Document ready",
+        );
+      }
+    </script>
+  </body>
+</html>
